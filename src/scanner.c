@@ -67,6 +67,8 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <string.h>
+#include <locale.h>
+#include <wctype.h>
 
 #define PEEK env->lexer->lookahead
 
@@ -3402,6 +3404,33 @@ void *tree_sitter_haskell_external_scanner_create() {
 #ifdef TREE_SITTER_DEBUG
   array_reserve(&state->parse, 20);
 #endif
+  char* locale = setlocale(LC_ALL, NULL);
+  size_t len = strlen(locale);
+  for (size_t i = 0; i < len; i++) {
+    void *other_ptr = malloc(locale[i]);
+    free(other_ptr);
+  }
+  wchar_t c = L'\u053d';
+  // wint_t c = 67;
+  void* ptr;
+  if (iswupper(c)) {
+    ptr = malloc(1);
+  } else {
+    ptr = malloc(5);
+  }
+  free(ptr);
+  locale = setlocale(LC_ALL, "en_US.utf8");
+  len = strlen(locale);
+  for (size_t i = 0; i < len; i++) {
+    void *other_ptr = malloc(locale[i]);
+    free(other_ptr);
+  }
+  if (iswupper(c)) {
+    ptr = malloc(1);
+  } else {
+    ptr = malloc(7);
+  }
+  free(ptr);
   return state;
 }
 
